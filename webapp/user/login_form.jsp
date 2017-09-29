@@ -11,13 +11,13 @@
 	<div class="container" id="main">
 		<div class="col-md-6 col-md-offset-3">
 			<div class="panel panel-default content-main">
-				<form name="question" method="post" action="/user/login_action.jsp">
+				<form name="question" method="post" action="/users/login">
 					<%
 					Object errorMessage = request.getAttribute("errorMessage");
 					if( errorMessage != null){
 					%>
 					<div class="form-group">
-						<label class="error"><%= errorMessage %></label>>
+						<label class="error"><%= errorMessage %></label>
 					</div>
 					<%
 					}
