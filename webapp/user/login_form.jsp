@@ -12,6 +12,16 @@
 		<div class="col-md-6 col-md-offset-3">
 			<div class="panel panel-default content-main">
 				<form name="question" method="post" action="/user/login_action.jsp">
+					<%
+					Object errorMessage = request.getAttribute("errorMessage");
+					if( errorMessage != null){
+					%>
+					<div class="form-group">
+						<label class="error"><%= errorMessage %></label>>
+					</div>
+					<%
+					}
+					%>
 					<div class="form-group">
 						<label for="userId">사용자 아이디</label> <input class="form-control"
 							id="userId" name="userId" placeholder="User ID">

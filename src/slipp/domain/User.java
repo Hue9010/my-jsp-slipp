@@ -53,7 +53,7 @@ public class User {
 		return this.password.equals(password);
 	}
 
-	public static void login(String userId, String password) throws UserNotFoundException, passwordMissMatchException {
+	public static boolean login(String userId, String password) throws UserNotFoundException, passwordMissMatchException {
 		User user = Db.findByUserId(userId);
 		if(user == null) {
 			throw new UserNotFoundException();
@@ -62,6 +62,7 @@ public class User {
 		if(!user.matchPassword(password)) {
 			throw new passwordMissMatchException();
 		}
+		return true;
 	}
 	
 }
