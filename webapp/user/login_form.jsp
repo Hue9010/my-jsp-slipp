@@ -5,13 +5,13 @@
 <head>
 <%@include file="/_head.jspf"%>
 </head>
-
 <body>
 	<%@include file="/_top.jspf"%>
+
 	<div class="container" id="main">
 		<div class="col-md-6 col-md-offset-3">
 			<div class="panel panel-default content-main">
-				<form name="question" method="post" action="/user/create.jsp">
+				<form name="question" method="post" action="/user/login_action.jsp">
 					<div class="form-group">
 						<label for="userId">사용자 아이디</label> <input class="form-control"
 							id="userId" name="userId" placeholder="User ID">
@@ -21,15 +21,7 @@
 							class="form-control" id="password" name="password"
 							placeholder="Password">
 					</div>
-					<div class="form-group">
-						<label for="name">이름</label> <input class="form-control" id="name"
-							name="name" placeholder="Name">
-					</div>
-					<div class="form-group">
-						<label for="email">이메일</label> <input type="email"
-							class="form-control" id="email" name="email" placeholder="Email">
-					</div>
-					<button type="submit" class="btn btn-success clearfix pull-right">회원가입</button>
+					<button type="submit" class="btn btn-success clearfix pull-right">로그인</button>
 					<div class="clearfix" />
 				</form>
 			</div>
@@ -37,6 +29,5 @@
 	</div>
 
 	<%@include file="/_footer.jspf"%>
-
 </body>
 </html>
