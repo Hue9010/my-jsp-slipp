@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <nav class="navbar navbar-fixed-top header">
 	<div class="col-md-12">
 		<div class="navbar-header">
@@ -62,27 +63,17 @@
 		</div>
 		<div class="collapse navbar-collapse" id="navbar-collapse2">
 			<ul class="nav navbar-nav navbar-right">
-				<%
-					String userId = (String) session.getAttribute("loginedId");
-				%>
 				<li class="active"><a href="/index.jsp">Posts</a></li>
-				<%
-					if (userId == null) {
-				%>
-				<li><a href="/user/login_form.jsp" role="button">로그인</a></li>
-				<li><a href="/user/form.jsp" role="button">회원가입</a></li>
-				<%
-					} else {
-				%>
-				<!--
-                <li><a href="#loginModal" role="button" data-toggle="modal">로그인</a></li>
-                <li><a href="#registerModal" role="button" data-toggle="modal">회원가입</a></li>
-                -->
-				<li><a href="/user/logout.jsp" role="button">로그아웃</a></li>
-				<li><a href="#" role="button">개인정보수정</a></li>
-				<%
-					}
-				%>
+				<c:choose>
+					<c:when test="${not empty loginedId}">
+						<li><a href="/users/logout" role="button">로그아웃</a></li>
+						<li><a href="#" role="button">개인정보수정</a></li>
+					</c:when>
+					<c:otherwise>
+						<li><a href="/user/login_form.jsp" role="button">로그인</a></li>
+						<li><a href="/user/form.jsp" role="button">회원가입</a></li>
+					</c:otherwise>
+				</c:choose>
 			</ul>
 		</div>
 	</div>
