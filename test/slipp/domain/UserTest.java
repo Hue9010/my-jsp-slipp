@@ -10,12 +10,7 @@ import slipp.exception.passwordMissMatchException;
 
 public class UserTest {
 
-	User user;
-	
-	@Before
-	public void setup() {
-		user = new User("id1", "ps1", "name1", "name1@email.com");
-	}
+	public static User user = new User("testID2", "ps", "TEST2", "TEST2@email.com");
 	
 	@Test
 	public void matchPassword() {
@@ -27,22 +22,22 @@ public class UserTest {
 		assertFalse(user.matchPassword("ps2"));
 	}
 	
-	@Test
-	public void login() throws Exception{
-		Db.addUser(user);
-		User.login(user.getUserId(), user.getPassword());
-	}
-	
-	@Test(expected=UserNotFoundException.class)
-	public void loginWhenNotExistedUser() throws Exception{
-		Db.addUser(user);
-		User.login("id2", user.getPassword());
-	}
-	
-	@Test(expected=passwordMissMatchException.class)
-	public void paswordMissMatch() throws Exception{
-		Db.addUser(user);
-		User.login(user.getUserId(), "ps233");
-	}
+//	@Test
+//	public void login() throws Exception{
+//		Db.addUser(user);
+//		User.login(user.getUserId(), user.getPassword());
+//	}
+//	
+//	@Test(expected=UserNotFoundException.class)
+//	public void loginWhenNotExistedUser() throws Exception{
+//		Db.addUser(user);
+//		User.login("id2", user.getPassword());
+//	}
+//	
+//	@Test(expected=passwordMissMatchException.class)
+//	public void paswordMissMatch() throws Exception{
+//		Db.addUser(user);
+//		User.login(user.getUserId(), "ps233");
+//	}
 
 }
