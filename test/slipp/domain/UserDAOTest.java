@@ -12,8 +12,9 @@ public class UserDAOTest {
 	private UserDAO userDao;
 	
 	@Before
-	public void setup() {
+	public void setup() throws SQLException {
 		userDao = new UserDAO();
+		userDao.removeUser(UserTest.user.getUserId());
 	}
 	
 	@Test
@@ -23,13 +24,25 @@ public class UserDAOTest {
 	}
 	
 	@Test
-	public void insert() throws SQLException {
-//		userDao.addUser(UserTest.user);
+	public void crud() throws SQLException {
+		User user = UserTest.user;
+		userDao.addUser(UserTest.user);
+		
+		User dbUser = userDao.findByUserId(user.getUserId());
+		assertEquals(UserTest.user,dbUser);
+		
+		User updateUser = new User(user.getUserId(), "uPassword", "update_name", "update_email");
+		userDao.userUpdateUser(updateUser);
+		dbUser = userDao.findByUserId(user.getUserId());
+		assertEquals(dbUser,updateUser);
 	}
 	
 	@Test
-	public void findByUser() throws Exception{
-		User user = userDao.findByUserId("testID2");
-		assertEquals(UserTest.user,user);
+	public void 존재하지_않는_사용자_조회() throws Exception{
+		User user = UserTest.user;
+		userDao.removeUser(user.getUserId());
+		
+		User dbUser = userDao.findByUserId(user.getUserId());
+		assertNull(dbUser);
 	}
 }
