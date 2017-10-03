@@ -16,19 +16,21 @@ import slipp.domain.UserDAO;
 public class CreateUserServlet extends HttpServlet {
 
 	@Override
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+	protected void doPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		// 4자 이상, 12자 이하, 영문자/숫자만 허용
 		String userId = request.getParameter("userId");
 		String password = request.getParameter("password");
 		String name = request.getParameter("name");
 		String email = request.getParameter("email");
-		
+
 		User user = new User(userId, password, name, email);
 		UserDAO userDAO = new UserDAO();
 		try {
 			userDAO.addUser(user);
-		} catch(SQLException e){
+		} catch (SQLException e) {
 		}
-		
+
 		response.sendRedirect("/");
 	}
 }
