@@ -8,15 +8,29 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import slipp.domain.User;
 import slipp.domain.UserDAO;
+import slipp.util.SessionUtils;
 
 @WebServlet("/users/update")
 public class UpdateUserServlet extends HttpServlet {
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse resp) throws ServletException, IOException {
+		HttpSession session = request.getSession();
+		String sessionUserId = SessionUtils.getStringValue(session, "loginedId");
+		if(sessionUserId == null) {
+			resp.sendRedirect("/");
+			return;
+		}
+		
 		String userId = request.getParameter("userId");
+		if(!sessionUserId.equals(userId)) {
+			resp.sendRedirect("/");
+			return;
+		}
+		
 		String password = request.getParameter("password");
 		String name = request.getParameter("name");
 		String email = request.getParameter("email");

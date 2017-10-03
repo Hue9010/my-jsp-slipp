@@ -13,6 +13,7 @@ import javax.servlet.http.HttpSession;
 
 import slipp.domain.User;
 import slipp.domain.UserDAO;
+import slipp.util.SessionUtils;
 
 @WebServlet("/users/updateForm")
 public class UpdateFormServlet extends HttpServlet {
@@ -20,12 +21,12 @@ public class UpdateFormServlet extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException{
 		HttpSession session = req.getSession();
-		Object object = session.getAttribute("loginedId");
-		if(object == null) {
+		String userId = SessionUtils.getStringValue(session, "loginedId");
+		if(userId == null) {
 			res.sendRedirect("/");
 			return;
 		}
-		String userId = (String)object;
+		
 		UserDAO userDao = new UserDAO();
 		try {
 			User user = userDao.findByUserId(userId);
