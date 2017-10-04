@@ -18,7 +18,7 @@ public class UserValidatorTest {
 	private static Validator validator;
 
 	@BeforeClass
-	public static void serUp() {
+	public static void setUp() {
 		ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
 		validator = factory.getValidator();
 	}
