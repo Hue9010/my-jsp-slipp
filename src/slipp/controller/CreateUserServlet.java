@@ -1,6 +1,7 @@
 package slipp.controller;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
 import java.util.Set;
 
@@ -13,6 +14,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
 
+import org.apache.commons.beanutils.BeanUtilsBean;
+
 import slipp.domain.User;
 import slipp.domain.UserDAO;
 import slipp.support.MyValidatorFactory;
@@ -23,13 +26,14 @@ public class CreateUserServlet extends HttpServlet {
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		// 4자 이상, 12자 이하, 영문자/숫자만 허용
-		String userId = request.getParameter("userId");
-		String password = request.getParameter("password");
-		String name = request.getParameter("name");
-		String email = request.getParameter("email");
+		
+		User user = new User();
+		try {
+			BeanUtilsBean.getInstance().populate(user, request.getParameterMap());
+		} catch (IllegalAccessException | InvocationTargetException e1) {
+			throw new ServletException();
+		}
 
-		User user = new User(userId, password, name, email);
 		Validator validator = MyValidatorFactory.createValidator();
 		Set<ConstraintViolation<User>> constrationViolations = validator.validate(user);
 		if (constrationViolations.size() > 0) {

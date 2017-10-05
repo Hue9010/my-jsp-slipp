@@ -72,6 +72,13 @@ public class User {
 		return this.password.equals(password);
 	}
 
+	public boolean isSameUser(String userId) {
+		if(this.userId == null) {
+			return false;
+		}
+		return this.userId.equals(userId);
+	}
+	
 	public static boolean login(String userId, String password) throws UserNotFoundException, passwordMissMatchException {
 		UserDAO userDAO = new UserDAO();
 		User user = null;
