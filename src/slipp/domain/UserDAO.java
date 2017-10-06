@@ -1,124 +1,81 @@
 package slipp.domain;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class UserDAO {
-	public Connection getConnection() {
-		String url = "jdbc:mysql://localhost:3306/slipp";
-		String id = "slippUser";
-		String pw = "pass";
+import slipp.support.JdbcTemplate;
+import slipp.support.PreparedStatementSetter;
+import slipp.support.RowMapper;
 
-		try {
-			Class.forName("com.mysql.jdbc.Driver");
-			return DriverManager.getConnection(url, id, pw);
-		} catch (Exception e) {
-			System.out.println(e.getMessage());
-			return null;
-		}
-	}
+public class UserDAO {
 
 	public void addUser(User user) throws SQLException {
-		String sql = "insert into USERS values(?,?,?,?)";
-		Connection conn = null;
-		PreparedStatement pstmt = null;
-		try {
-			conn = getConnection();
-			pstmt = conn.prepareStatement(sql);
-			pstmt.setString(1, user.getUserId());
-			pstmt.setString(2, user.getPassword());
-			pstmt.setString(3, user.getName());
-			pstmt.setString(4, user.getEmail());
+		PreparedStatementSetter pss = new PreparedStatementSetter() {
+			@Override
+			public void setParameters(PreparedStatement pstmt) throws SQLException {
+				pstmt.setString(1, user.getUserId());
+				pstmt.setString(2, user.getPassword());
+				pstmt.setString(3, user.getName());
+				pstmt.setString(4, user.getEmail());
+			}
+		};
 
-			pstmt.executeUpdate();
-		} catch (SQLException e) {
-		} finally {
-			if (pstmt != null) {
-				pstmt.close();
-			}
-			if (conn != null) {
-				conn.close();
-			}
-		}
+		JdbcTemplate template = new JdbcTemplate();
+		String sql = "insert into USERS values(?,?,?,?)";
+		template.executeUpdate(sql, pss);
 	}
 
 	public User findByUserId(String userId) throws SQLException {
+		PreparedStatementSetter pss = new PreparedStatementSetter() {
 
-		String sql = "SELECT * FROM USERS where userId = ?";
+			@Override
+			public void setParameters(PreparedStatement pstmt) throws SQLException {
+				pstmt.setString(1, userId);
+			}
+		};
+		RowMapper rm = new RowMapper() {
+			@Override
+			public Object mapRow(ResultSet rs) throws SQLException {
+				return new User(rs.getString("userId"), rs.getString("password"), rs.getString("name"),
+						rs.getString("email"));
+			}
+		};
 
-		Connection conn = null;
-		PreparedStatement pstmt = null;
-		ResultSet rs = null;
-		try {
-			conn = getConnection();
-			pstmt = conn.prepareStatement(sql);
-			pstmt.setString(1, userId);
+		JdbcTemplate template = new JdbcTemplate();
+		String sql = createQuery();
+		return (User) template.executeQuery(sql, pss, rm);
+	}
 
-			rs = pstmt.executeQuery();
-
-			if (!rs.next()) {
-				return null;
-			}
-			return new User(rs.getString("userId"), rs.getString("password"), rs.getString("name"),
-					rs.getString("email"));
-		} finally {
-			if (rs != null) {
-				rs.close();
-			}
-			if (pstmt != null) {
-				pstmt.close();
-			}
-			if (conn != null) {
-				conn.close();
-			}
-		}
+	private String createQuery() {
+		return "SELECT * FROM USERS where userId = ?";
 	}
 
 	public void removeUser(String userId) throws SQLException {
-		String sql = "delete from USERS where userId = ?";
-		Connection conn = null;
-		PreparedStatement pstmt = null;
-		try {
-			conn = getConnection();
-			pstmt = conn.prepareStatement(sql);
-			pstmt.setString(1, userId);
+		PreparedStatementSetter pss = new PreparedStatementSetter() {
+			@Override
+			public void setParameters(PreparedStatement pstmt) throws SQLException {
+				pstmt.setString(1, userId);
+			}
+		};
 
-			pstmt.executeUpdate();
-		} catch (SQLException e) {
-		} finally {
-			if (pstmt != null) {
-				pstmt.close();
-			}
-			if (conn != null) {
-				conn.close();
-			}
-		}
+		String sql = "delete from USERS where userId = ?";
+		JdbcTemplate template = new JdbcTemplate();
+		template.executeUpdate(sql, pss);
 	}
 
 	public void userUpdateUser(User user) throws SQLException {
+		PreparedStatementSetter pss = new PreparedStatementSetter() {
+			@Override
+			public void setParameters(PreparedStatement pstmt) throws SQLException {
+				pstmt.setString(1, user.getPassword());
+				pstmt.setString(2, user.getName());
+				pstmt.setString(3, user.getEmail());
+				pstmt.setString(4, user.getUserId());
+			}
+		};
 		String sql = "update USERS set password = ?, name = ?, email = ? where userId = ?";
-		Connection conn = null;
-		PreparedStatement pstmt = null;
-		try {
-			conn = getConnection();
-			pstmt = conn.prepareStatement(sql);
-			pstmt.setString(1, user.getPassword());
-			pstmt.setString(2, user.getName());
-			pstmt.setString(3, user.getEmail());
-			pstmt.setString(4, user.getUserId());
-
-			pstmt.executeUpdate();
-		} catch (SQLException e) {
-		} finally {
-			if (pstmt != null) {
-				pstmt.close();
-			}
-			if (conn != null) {
-				conn.close();
-			}
-		}
+		JdbcTemplate template = new JdbcTemplate();
+		template.executeUpdate(sql, pss);
 	}
 }

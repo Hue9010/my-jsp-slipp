@@ -18,12 +18,6 @@ public class UserDAOTest {
 	}
 	
 	@Test
-	public void test() {
-		Connection con = userDao.getConnection();
-		assertNotNull(con);
-	}
-	
-	@Test
 	public void crud() throws SQLException {
 		User user = UserTest.user;
 		userDao.addUser(UserTest.user);
