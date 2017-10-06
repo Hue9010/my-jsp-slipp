@@ -3,6 +3,7 @@ package slipp.domain;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 
 import slipp.support.JdbcTemplate;
 import slipp.support.PreparedStatementSetter;
@@ -11,32 +12,16 @@ import slipp.support.RowMapper;
 public class UserDAO {
 
 	public void addUser(User user) throws SQLException {
-		PreparedStatementSetter pss = new PreparedStatementSetter() {
-			@Override
-			public void setParameters(PreparedStatement pstmt) throws SQLException {
-				pstmt.setString(1, user.getUserId());
-				pstmt.setString(2, user.getPassword());
-				pstmt.setString(3, user.getName());
-				pstmt.setString(4, user.getEmail());
-			}
-		};
 
 		JdbcTemplate template = new JdbcTemplate();
 		String sql = "insert into USERS values(?,?,?,?)";
-		template.executeUpdate(sql, pss);
+		template.executeUpdate(sql, user.getUserId(), user.getPassword(), user.getName(), user.getEmail());
 	}
 
 	public User findByUserId(String userId) throws SQLException {
-		PreparedStatementSetter pss = new PreparedStatementSetter() {
-
+		RowMapper<User> rm = new RowMapper<User>() {
 			@Override
-			public void setParameters(PreparedStatement pstmt) throws SQLException {
-				pstmt.setString(1, userId);
-			}
-		};
-		RowMapper rm = new RowMapper() {
-			@Override
-			public Object mapRow(ResultSet rs) throws SQLException {
+			public User mapRow(ResultSet rs) throws SQLException {
 				return new User(rs.getString("userId"), rs.getString("password"), rs.getString("name"),
 						rs.getString("email"));
 			}
@@ -44,7 +29,7 @@ public class UserDAO {
 
 		JdbcTemplate template = new JdbcTemplate();
 		String sql = createQuery();
-		return (User) template.executeQuery(sql, pss, rm);
+		return template.executeQuery(sql, rm, userId);
 	}
 
 	private String createQuery() {
@@ -52,30 +37,28 @@ public class UserDAO {
 	}
 
 	public void removeUser(String userId) throws SQLException {
-		PreparedStatementSetter pss = new PreparedStatementSetter() {
-			@Override
-			public void setParameters(PreparedStatement pstmt) throws SQLException {
-				pstmt.setString(1, userId);
-			}
-		};
-
 		String sql = "delete from USERS where userId = ?";
 		JdbcTemplate template = new JdbcTemplate();
-		template.executeUpdate(sql, pss);
+		template.executeUpdate(sql, userId);
 	}
 
 	public void userUpdateUser(User user) throws SQLException {
-		PreparedStatementSetter pss = new PreparedStatementSetter() {
-			@Override
-			public void setParameters(PreparedStatement pstmt) throws SQLException {
-				pstmt.setString(1, user.getPassword());
-				pstmt.setString(2, user.getName());
-				pstmt.setString(3, user.getEmail());
-				pstmt.setString(4, user.getUserId());
-			}
-		};
 		String sql = "update USERS set password = ?, name = ?, email = ? where userId = ?";
 		JdbcTemplate template = new JdbcTemplate();
-		template.executeUpdate(sql, pss);
+		template.executeUpdate(sql, user.getPassword(), user.getName(), user.getEmail(), user.getUserId());
+	}
+
+	public List<User> findUsers() throws SQLException {
+		RowMapper<User> rm = new RowMapper<User>() {
+			@Override
+			public User mapRow(ResultSet rs) throws SQLException {
+				return new User(rs.getString("userId"), rs.getString("password"), rs.getString("name"),
+						rs.getString("email"));
+			}
+		};
+
+		JdbcTemplate template = new JdbcTemplate();
+		String sql = "SELECT * FROM USERS";
+		return template.list(sql, rm);
 	}
 }

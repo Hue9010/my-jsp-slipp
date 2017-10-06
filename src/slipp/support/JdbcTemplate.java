@@ -5,6 +5,8 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import slipp.domain.User;
 import slipp.domain.UserDAO;
@@ -31,7 +33,23 @@ public class JdbcTemplate {
 		}
 	}
 
-	public Object executeQuery(String sql, PreparedStatementSetter pss, RowMapper rm) throws SQLException {
+	public void executeUpdate(String sql, Object... parameters) throws SQLException {
+		executeUpdate(sql, createPrepatedSetter(parameters));
+	}
+
+	public <T> T executeQuery(String sql, RowMapper<T> rm, PreparedStatementSetter pss) throws SQLException {
+		List<T> list = list(sql, rm, pss);
+		if(list.isEmpty()) {
+			return null;
+		}
+		return list.get(0);
+	}
+
+	public <T> T executeQuery(String sql, RowMapper<T> rm, Object... parameters) throws SQLException {
+		return executeQuery(sql, rm, createPrepatedSetter(parameters));
+	}
+
+	public <T> List<T> list(String sql, RowMapper<T> rm, PreparedStatementSetter pss) throws SQLException {
 
 		Connection conn = null;
 		PreparedStatement pstmt = null;
@@ -42,10 +60,12 @@ public class JdbcTemplate {
 			pss.setParameters(pstmt);
 
 			rs = pstmt.executeQuery();
-			if (!rs.next()) {
-				return null;
+
+			List<T> list = new ArrayList<T>();
+			while (rs.next()) {
+				list.add(rm.mapRow(rs));
 			}
-			return rm.mapRow(rs);
+			return list;
 		} finally {
 			if (rs != null) {
 				rs.close();
@@ -57,5 +77,21 @@ public class JdbcTemplate {
 				conn.close();
 			}
 		}
+	}
+
+	public <T> List<T> list(String sql, RowMapper<T> rm, Object... parameters) throws SQLException {
+		return list(sql, rm, createPrepatedSetter(parameters));
+	}
+
+	private PreparedStatementSetter createPrepatedSetter(Object... parameters) {
+		PreparedStatementSetter pss = new PreparedStatementSetter() {
+			@Override
+			public void setParameters(PreparedStatement pstmt) throws SQLException {
+				for (int i = 0; i < parameters.length; i++) {
+					pstmt.setObject(i + 1, parameters[i]);
+				}
+			}
+		};
+		return pss;
 	}
 }
