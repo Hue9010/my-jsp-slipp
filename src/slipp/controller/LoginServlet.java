@@ -26,7 +26,6 @@ public class LoginServlet extends HttpServlet {
 			User.login(userId, password);
 			HttpSession session = request.getSession();
 			session.setAttribute("loginedId", userId);
-			System.out.println("here");
 			response.sendRedirect("/");
 		} catch (UserNotFoundException e) {
 			forwardJSP(request, response, "존재하지 않는 사용자입니다. 다시 로그인하세요.");

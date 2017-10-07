@@ -40,7 +40,7 @@ public class UpdateUserServlet extends HttpServlet {
 			throw new ServletException();
 		}
 
-		if (user.isSameUser(sessionUserId)) {
+		if (!user.isSameUser(sessionUserId)) {
 			resp.sendRedirect("/");
 			return;
 		}
