@@ -24,10 +24,10 @@ public class User {
 	private String name;
 	@Email
 	private String email;
-	
+
 	public User() {
 	}
-	
+
 	public User(String userId, String password, String name, String email) {
 		super();
 		this.userId = userId;
@@ -73,25 +73,21 @@ public class User {
 	}
 
 	public boolean isSameUser(String userId) {
-		if(this.userId == null) {
+		if (this.userId == null) {
 			return false;
 		}
 		return this.userId.equals(userId);
 	}
-	
-	public static boolean login(String userId, String password) throws UserNotFoundException, passwordMissMatchException {
+
+	public static boolean login(String userId, String password)
+			throws UserNotFoundException, passwordMissMatchException {
 		UserDAO userDAO = new UserDAO();
-		User user = null;
-		try {
-			user = userDAO.findByUserId(userId);
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		if(user == null) {
+		User user = userDAO.findByUserId(userId);
+		if (user == null) {
 			throw new UserNotFoundException();
 		}
-		
-		if(!user.matchPassword(password)) {
+
+		if (!user.matchPassword(password)) {
 			throw new passwordMissMatchException();
 		}
 		return true;
@@ -144,5 +140,5 @@ public class User {
 	public String toString() {
 		return "User [userId=" + userId + ", name=" + name + ", email=" + email + "]";
 	}
-	
+
 }

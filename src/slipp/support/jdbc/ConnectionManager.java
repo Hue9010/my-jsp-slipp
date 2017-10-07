@@ -1,4 +1,4 @@
-package slipp.support;
+package slipp.support.jdbc;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

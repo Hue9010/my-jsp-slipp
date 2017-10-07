@@ -17,28 +17,24 @@ import slipp.util.SessionUtils;
 
 @WebServlet("/users/updateForm")
 public class UpdateFormServlet extends HttpServlet {
-	
+
 	@Override
-	protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException{
+	protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 		HttpSession session = req.getSession();
 		String userId = SessionUtils.getStringValue(session, "loginedId");
-		if(userId == null) {
+		if (userId == null) {
 			res.sendRedirect("/");
 			return;
 		}
-		
+
 		UserDAO userDao = new UserDAO();
-		try {
-			User user = userDao.findByUserId(userId);
-			req.setAttribute("isUpdate", true);
-			req.setAttribute("user", user);
-			RequestDispatcher rd = req.getRequestDispatcher("/user/form.jsp");
-			rd.forward(req, res);
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+		User user = userDao.findByUserId(userId);
+		req.setAttribute("isUpdate", true);
+		req.setAttribute("user", user);
+		RequestDispatcher rd = req.getRequestDispatcher("/user/form.jsp");
+		rd.forward(req, res);
 	}
-	
+
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
@@ -49,10 +45,7 @@ public class UpdateFormServlet extends HttpServlet {
 
 		User user = new User(userId, password, name, email);
 		UserDAO userDAO = new UserDAO();
-		try {
-			userDAO.addUser(user);
-		} catch (SQLException e) {
-		}
+		userDAO.addUser(user);
 
 		response.sendRedirect("/");
 	}

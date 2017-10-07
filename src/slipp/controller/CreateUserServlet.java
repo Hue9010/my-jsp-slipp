@@ -26,7 +26,7 @@ public class CreateUserServlet extends HttpServlet {
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		
+
 		User user = new User();
 		try {
 			BeanUtilsBean.getInstance().populate(user, request.getParameterMap());
@@ -44,14 +44,12 @@ public class CreateUserServlet extends HttpServlet {
 		}
 
 		UserDAO userDAO = new UserDAO();
-		try {
-			userDAO.addUser(user);
-		} catch (SQLException e) {
-		}
+		userDAO.addUser(user);
 		response.sendRedirect("/");
 	}
-	
-	private void forwardJSP(HttpServletRequest request, HttpServletResponse response, String errorMessage) throws ServletException, IOException{
+
+	private void forwardJSP(HttpServletRequest request, HttpServletResponse response, String errorMessage)
+			throws ServletException, IOException {
 		request.setAttribute("errorMessage", errorMessage);
 		RequestDispatcher rd = request.getRequestDispatcher("/user/form.jsp");
 		rd.forward(request, response);

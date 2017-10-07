@@ -56,11 +56,7 @@ public class UpdateUserServlet extends HttpServlet {
 		}
 
 		UserDAO userDAO = new UserDAO();
-		try {
-			userDAO.userUpdateUser(user);
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+		userDAO.userUpdateUser(user);
 
 		resp.sendRedirect("/");
 	}
